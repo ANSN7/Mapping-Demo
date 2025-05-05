@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "name": "acm-swm-app",
+    "namespace": "he-codeco-acm",
+    "creationTimestamp": null,
+    "labels": { "application-group": "acm-applicationgroup" }
+  },
+  "spec": {
+    "workloads": [
+      {
+        "basename": "backend",
+        "template": {
+          "metadata": {},
+          "spec": {
+            "containers": [
+              {
+                "name": "skupper-backend",
+                "image": "quay.io/skupper/hello-world-backend:latest",
+                "ports": [
+                  {
+                    "name": "skupper-backend",
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": { "limits": { "cpu": "2", "memory": "4Gi" } }
+              }
+            ]
+          }
+        },
+        "channels": [
+          {
+            "basename": "frontend",
+            "otherWorkload": {
+              "basename": "front-end",
+              "applicationName": "acm-swm-app",
+              "port": 9090
+            },
+            "bandwidth": "5",
+            "maxDelay": "1",
+            "framesize": "100",
+            "sendInterval": "10"
+          }
+        ]
+      },
+      {
+        "basename": "front-end",
+        "template": {
+          "metadata": {},
+          "spec": {
+            "containers": [
+              {
+                "name": "front-end",
+                "image": "quay.io/dekelly/frontend-app:v0.0.2",
+                "ports": [{ "containerPort": 8080, "protocol": "TCP" }],
+                "resources": {}
+              }
+            ]
+          }
+        },
+        "channels": [
+          {
+            "basename": "backend",
+            "otherWorkload": {
+              "basename": "backend",
+              "applicationName": "acm-swm-app",
+              "port": 8080
+            },
+            "bandwidth": "5",
+            "maxDelay": "1",
+            "framesize": "100",
+            "sendInterval": "10"
+          }
+        ]
+      }
+    ]
+  },
+  "status": {}
+}

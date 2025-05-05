@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    prometheus: example
+    # role: record-rules
+  name: prometheus-example-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: example
+    rules:
+    - record: code:prometheus_http_requests_total:sum #metric name
+      expr: "sum by (code) (prometheus_http_requests_total)" #metric value
